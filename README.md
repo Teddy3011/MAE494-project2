@@ -1,5 +1,9 @@
 # Project 2 — Ill-Conditioned Least Squares: Thermocouple Calibration Polynomials
 
+**Team members:** Your Name, Partner Name  
+**Course:** MAE 494  
+**Date:** September 28, 2026
+
 **Family C — correlated / multiscale features.** In linear least squares the Hessian is $H = V^\top V/m$; when the columns of the design matrix $V$ are nearly collinear or live on wildly different scales, $H$ is nearly singular and gradient methods crawl.
 
 Reproduce everything (≈30 s, Python ≥ 3.9, `numpy`, `matplotlib`):
@@ -24,6 +28,10 @@ $$T(E) = \sum_{k=0}^{9} c_k E^k, \qquad 0 \le E \le 20.644\ \text{mV}\ (0\text{�
 ## 2. Formulation
 
 **Data.** $m = 200$ voltages uniformly spaced on $[0, E_{\max}]$, $E_{\max}=20.644$ mV. Temperatures are generated from the published NIST type-K inverse coefficients [1] plus Gaussian sensor noise $\sigma = 0.05\,^\circ$C (seed 0). (Sanity check in code: $T(E_{\max}) = 500.0\,^\circ$C.)
+
+![Calibration data and fit](figs/calibration_fit.png)
+
+*Top: the 200 calibration points and the degree-9 fit. Middle: the same data minus the straight line through the endpoints. This is the nonlinearity (several °C) the high-degree terms must capture. Bottom: the residuals look like pure noise (RMS 0.047 °C). The model itself fits well; the difficulty lies entirely in how hard the coefficients are to compute.*
 
 **Decision variables.**
 
@@ -103,7 +111,7 @@ With raw monomials (κ = 571), GD drops into the narrow valley in one step and t
 
 **With the kit's `gradient_descent`** (stopping rule $\lVert\nabla f(c_k)\rVert \le 10^{-6}\lVert\nabla f(c_0)\rVert$): at $d=5$ the rescaled monomials take **94,821** iterations and Chebyshev takes **47**; at $d=9$ the monomials take **≥ 100,000** (cap) and Chebyshev takes **70**.
 
-Monomial GD iteration counts grow about 18× per degree, tracking κ as the theory predicts. At the NIST degree the bound implies roughly $10^{14}$ iterations. In practice GD stalls at a relative gap of about $10^{-6}$ after 100,000 iterations (2.4 s).
+Monomial GD iteration counts grow about 18× per degree, tracking κ as the theory predicts. At the NIST degree the bound implies roughly $10^{14}$ iterations. In practice GD stalls at a relative gap of about $10^{-6}$ after 100,000 iterations, which took about 2.4 s in the recorded run. Wall-clock times vary by computer; iteration counts are exactly reproducible.
 
 ## 5. Solution — change to an orthogonal (Chebyshev) basis
 
@@ -119,13 +127,13 @@ Why this targets the mechanism: Jacobi scaling fixes column **lengths**, while a
 
 ![D4 d=9](figs/d3d4_convergence_d9.png)
 
-| $d = 9$ | κ(H) | GD iterations to $10^{-8}$ | wall clock |
+| $d = 9$ | κ(H) | GD iterations to $10^{-8}$ | wall clock (recorded run) |
 |---|---:|---:|---:|
 | Monomials, raw | 3.3e25 | — (hopeless) | — |
 | Monomials, Jacobi-rescaled (baseline) | 5.6e12 | > 100,000 (stalls ≈ 1e-6) | 2.4 s |
 | **Chebyshev basis** | **6.65** | **47** | **1.2 ms** |
 
-κ drops by a factor of about $10^{12}$ relative to the rescaled baseline, and GD reaches the target over 2000× faster in wall-clock time. At $d = 5$ ([figure](figs/d3d4_convergence_d5.png)) the effect is the same: > 100,000 iterations become 32.
+κ drops by a factor of about $10^{12}$ relative to the rescaled baseline, and GD reaches the target over 2000× faster in wall-clock time in the recorded run. Timings vary by machine; the iteration counts are the reproducible measure. At $d = 5$ ([figure](figs/d3d4_convergence_d5.png)) the effect is the same: > 100,000 iterations become 32.
 
 **Secondary comparison: conjugate gradient** (from the gradient-descent lectures). CG needs about $\sqrt\kappa$ iterations and in exact arithmetic finishes in $d+1 = 10$ steps. On rescaled monomials at $d = 9$ it takes **36** steps because rounding destroys conjugacy when κ ≈ 10¹². On the Chebyshev basis it takes **8**. CG only treats the symptom; the basis change removes the cause.
 

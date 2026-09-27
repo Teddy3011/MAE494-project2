@@ -277,4 +277,28 @@ for basis in ("raw", "cheb"):
     c_qr = np.linalg.lstsq(V, y, rcond=None)[0]
     print(f"d=9 {basis:4s}: normal-equation vs QR fit, max |T diff| = {np.abs(V @ (c_ne - c_qr)).max():.2e} degC, "
           f"fit RMS = {np.sqrt(np.mean((V @ c_qr - y) ** 2)):.4f} degC")
+# ---------------- The physical problem: calibration data and the fitted curve ----------------
+V = design(9, "cheb")
+fit = V @ np.linalg.lstsq(V, y, rcond=None)[0]
+line = E * 500 / E_MAX  # straight line through the endpoints
+fig, (ax1, ax3, ax2) = plt.subplots(3, 1, figsize=(6, 7), sharex=True, gridspec_kw={"height_ratios": [2, 2, 1]})
+ax1.plot(E, y, ".", ms=3, color="gray", label="measured (NIST curve + 0.05 °C noise)")
+ax1.plot(E, fit, "r-", lw=1.5, label="degree-9 least-squares fit")
+ax1.set_ylabel("temperature T (°C)")
+ax1.set_title("Type-K thermocouple calibration, 0–500 °C")
+ax1.legend(fontsize=8)
+ax1.grid(alpha=0.3)
+ax3.plot(E, y - line, ".", ms=3, color="gray")
+ax3.plot(E, fit - line, "r-", lw=1.5)
+ax3.set_ylabel("T − straight line (°C)")
+ax3.set_title("nonlinearity the polynomial must capture", fontsize=10)
+ax3.grid(alpha=0.3)
+ax2.plot(E, y - fit, ".", ms=3, color="gray")
+ax2.axhline(0, color="r", lw=1)
+ax2.set_xlabel("thermocouple voltage E (mV)")
+ax2.set_ylabel("residual (°C)")
+ax2.grid(alpha=0.3)
+plt.tight_layout()
+plt.savefig(FIG / "calibration_fit.png", dpi=150)
+
 print(f"\nfigures written to {FIG}")

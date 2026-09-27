@@ -48,12 +48,12 @@ D3/D4  iterations to reach (f-f*)/(f0-f*) <= 1e-8 (cap 100,000)
   7        >100,000              14            41             7
   8        >100,000              21            47             9
   9        >100,000              36            47             8
-d=5 GD, monomials (Jacobi-scaled)    iters=>100000  time=2108.8 ms  final gap=2.68e-07
-d=5 CG, monomials (Jacobi-scaled)    iters=7  time=0.4 ms  final gap=7.47e-09
-d=5 GD, Chebyshev                    iters=32  time=0.9 ms  final gap=6.48e-09
-d=9 GD, monomials (Jacobi-scaled)    iters=>100000  time=2104.6 ms  final gap=9.58e-07
-d=9 CG, monomials (Jacobi-scaled)    iters=36  time=1.4 ms  final gap=4.03e-11
-d=9 GD, Chebyshev                    iters=47  time=1.0 ms  final gap=8.95e-09
+d=5 GD, monomials (Jacobi-scaled)    iters=>100000  time=837.3 ms  final gap=2.68e-07
+d=5 CG, monomials (Jacobi-scaled)    iters=7  time=0.2 ms  final gap=7.47e-09
+d=5 GD, Chebyshev                    iters=32  time=0.4 ms  final gap=6.48e-09
+d=9 GD, monomials (Jacobi-scaled)    iters=>100000  time=854.0 ms  final gap=9.58e-07
+d=9 CG, monomials (Jacobi-scaled)    iters=36  time=0.7 ms  final gap=4.03e-11
+d=9 GD, Chebyshev                    iters=47  time=0.5 ms  final gap=8.95e-09
 
 Kit gradient_descent, stop at ||grad|| <= 1e-6 ||grad_0|| (maxit 100,000):
   d=5 monomial (rescaled) : 94,821 iterations
