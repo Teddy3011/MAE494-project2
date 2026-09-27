@@ -21,13 +21,13 @@ All numbers below are printed by the script (saved in [`results.txt`](results.tx
 
 A **type-K thermocouple** produces a voltage $E$ (mV) that depends nonlinearly on temperature. Every temperature controller, furnace, jet-engine test cell, and lab data logger that reads one must convert $E \to T$. The international standard (NIST ITS-90) does this with a **degree-9 polynomial in the monomial basis**,
 
-$$T(E) = \sum_{k=0}^{9} c_k E^k, \qquad 0 \le E \le 20.644\ \text{mV}\ (0\text{–}500\,^\circ\text{C}).$$
+$$T(E) = \sum_{k=0}^{9} c_k E^k, \qquad 0 \le E \le 20.644\ \text{mV}\ (0\text{–}500\thinspace ^\circ\text{C}).$$
 
 **Decision problem:** a calibration engineer (stakeholder: instrumentation / metrology lab, or firmware that re-calibrates a sensor in the field) measures $m$ pairs $(E_i, T_i)$ and must choose the coefficients $c$ that best fit them. Because the standard prescribes the monomial form, this is the basis people actually use — and it is severely ill-conditioned. Iterative fitting (gradient descent / SGD on an embedded device, or any fit with extra regularization or constraints that rules out a direct solve) becomes impractically slow, and even direct normal-equation solves lose accuracy.
 
 ## 2. Formulation
 
-**Data.** $m = 200$ voltages uniformly spaced on $[0, E_{\max}]$, $E_{\max}=20.644$ mV. Temperatures are generated from the published NIST type-K inverse coefficients [1] plus Gaussian sensor noise $\sigma = 0.05\,^\circ$C (seed 0). (Sanity check in code: $T(E_{\max}) = 500.0\,^\circ$C.)
+**Data.** $m = 200$ voltages uniformly spaced on $[0, E_{\max}]$, $E_{\max}=20.644$ mV. Temperatures are generated from the published NIST type-K inverse coefficients [1] plus Gaussian sensor noise $\sigma = 0.05\thinspace ^\circ$C (seed 0). (Sanity check in code: $T(E_{\max}) = 500.0\thinspace ^\circ$C.)
 
 ![Calibration data and fit](figs/calibration_fit.png)
 
@@ -43,7 +43,7 @@ The degree $d$ is a fixed modeling parameter, not a decision variable. It is the
 
 **Objective.** With the design matrix $V \in \mathbb{R}^{m\times(d+1)}$, $V_{ik} = \phi_k(E_i)$,
 
-$$\min_{c\in\mathbb{R}^{d+1}} \; f(c) = \frac{1}{2m}\,\lVert Vc - y\rVert_2^2, \qquad \nabla f(c) = H c - \tfrac{1}{m}V^\top y, \qquad H = \nabla^2 f = \tfrac{1}{m}V^\top V .$$
+$$\min_{c\in\mathbb{R}^{d+1}} \quad  f(c) = \frac{1}{2m}\thinspace \lVert Vc - y\rVert_2^2, \qquad \nabla f(c) = H c - \tfrac{1}{m}V^\top y, \qquad H = \nabla^2 f = \tfrac{1}{m}V^\top V .$$
 
 Baseline basis: monomials, $\phi_k(E) = E^k$.
 
@@ -51,18 +51,18 @@ Baseline basis: monomials, $\phi_k(E) = E^k$.
 
 **Classification.** Unconstrained, continuous, single-objective, deterministic, static. The objective is a convex quadratic (linear least squares, $H \succ 0$), so this is an unconstrained convex QP with a unique global minimizer $c^\star = (V^\top V)^{-1}V^\top y$. The Hessian is constant, so $\kappa(H)$ fully determines first-order convergence: gradient descent with step $1/L$ satisfies
 
-$$f(c_k)-f^\star \le \left(1-\kappa^{-1}\right)^k \big(f(c_0)-f^\star\big) \;\Rightarrow\; k \approx \kappa \ln(1/\varepsilon)\ \text{iterations}.$$
+$$f(c_k)-f^\star \le \left(1-\kappa^{-1}\right)^k \big(f(c_0)-f^\star\big) \quad \Rightarrow\quad  k \approx \kappa \ln(1/\varepsilon)\ \text{iterations}.$$
 
 ## 3. Ill-conditioning mechanism (family C)
 
-Write $t = E/E_{\max} \in [0,1]$ so that $E^k = E_{\max}^k\, t^k$. Then $V = \tilde V D$, where $\tilde V_{ik} = t_i^k$ and $D = \mathrm{diag}(E_{\max}^k)$. The Hessian has **two** separate sources of ill-conditioning:
+Write $t = E/E_{\max} \in [0,1]$ so that $E^k = E_{\max}^k\thinspace  t^k$. Then $V = \tilde V D$, where $\tilde V_{ik} = t_i^k$ and $D = \mathrm{diag}(E_{\max}^k)$. The Hessian has **two** separate sources of ill-conditioning:
 
 1. **Multiscale columns (the trivial, family-F part).** $D$ ranges from $1$ to $E_{\max}^9 \approx 6.8\times10^{11}$, so the diagonal of $H$ spans ~23 orders of magnitude. Diagonal rescaling removes exactly this part.
 2. **Collinear columns (the intrinsic, family-C part).** For uniformly sampled $t$,
 
-$$\big(\tfrac{1}{m}\tilde V^\top \tilde V\big)_{jk} = \frac{1}{m}\sum_i t_i^{\,j+k} \;\approx\; \int_0^1 t^{\,j+k}\,dt = \frac{1}{j+k+1},$$
+$$\big(\tfrac{1}{m}\tilde V^\top \tilde V\big)_{jk} = \frac{1}{m}\sum_i t_i^{\thinspace j+k} \quad \approx\quad  \int_0^1 t^{\thinspace j+k}\thinspace dt = \frac{1}{j+k+1},$$
 
-   which is the **Hilbert matrix**, with $\kappa \sim e^{3.5\,(d+1)}$. The high powers $t^8, t^9$ all look alike on $[0,1]$ (flat near 0, steep near 1): the angle between the $E^8$ and $E^9$ columns is only **3.18°** (cosine 0.9985). No diagonal scaling changes angles between columns, so this part cannot be rescaled away.
+   which is the **Hilbert matrix**, with $\kappa \sim e^{3.5\thinspace (d+1)}$. The high powers $t^8, t^9$ all look alike on $[0,1]$ (flat near 0, steep near 1): the angle between the $E^8$ and $E^9$ columns is only **3.18°** (cosine 0.9985). No diagonal scaling changes angles between columns, so this part cannot be rescaled away.
 
 ### Intrinsic-κ test (D2)
 
@@ -117,9 +117,9 @@ Monomial GD iteration counts grow about 18× per degree, tracking κ as the theo
 
 **Remedy.** The mechanism is collinearity *between basis functions*, so the fix is to choose basis functions that are not collinear. Map $E$ to $s = 2E/E_{\max} - 1 \in [-1,1]$ and fit in the Chebyshev basis,
 
-$$T(E) = \sum_{k=0}^{d} a_k\, T_k(s), \qquad T_k(\cos\theta) = \cos k\theta .$$
+$$T(E) = \sum_{k=0}^{d} a_k\thinspace  T_k(s), \qquad T_k(\cos\theta) = \cos k\theta .$$
 
-Chebyshev polynomials are orthogonal on $[-1,1]$ under the weight $w(s) = 1/\sqrt{1-s^2}$, i.e. $\int_{-1}^{1} T_j(s)\,T_k(s)\,w(s)\,ds = 0$ for $j \ne k$. Our voltage samples are uniform, so $\tfrac1m V^\top V$ approximates the unweighted integral $\tfrac12\int_{-1}^{1} T_j T_k\,ds$ instead. That matrix is not diagonal, but the columns stay far from collinear ($T_k$ oscillates between $\pm1$ on the whole interval instead of piling up near one end the way $t^k$ does), so the basis remains well-conditioned: κ grows only from 1.0 to 7.8 for $d = 1,\dots,12$. The fitted curve is the **same polynomial**: fit RMS is 0.0472 °C in both bases. Only the coordinates change, and the monomial coefficients can be recovered afterwards with `numpy.polynomial.chebyshev.cheb2poly` if the NIST format is required.
+Chebyshev polynomials are orthogonal on $[-1,1]$ under the weight $w(s) = 1/\sqrt{1-s^2}$, i.e. $\int_{-1}^{1} T_j(s)\thinspace T_k(s)\thinspace w(s)\thinspace ds = 0$ for $j \ne k$. Our voltage samples are uniform, so $\tfrac1m V^\top V$ approximates the unweighted integral $\tfrac12\int_{-1}^{1} T_j T_k\thinspace ds$ instead. That matrix is not diagonal, but the columns stay far from collinear ($T_k$ oscillates between $\pm1$ on the whole interval instead of piling up near one end the way $t^k$ does), so the basis remains well-conditioned: κ grows only from 1.0 to 7.8 for $d = 1,\dots,12$. The fitted curve is the **same polynomial**: fit RMS is 0.0472 °C in both bases. Only the coordinates change, and the monomial coefficients can be recovered afterwards with `numpy.polynomial.chebyshev.cheb2poly` if the NIST format is required.
 
 Why this targets the mechanism: Jacobi scaling fixes column **lengths**, while an orthogonal basis fixes column **angles**. The angles are the intrinsic family-C source identified in §3.
 
