@@ -1,0 +1,66 @@
+
+D2  kappa vs degree d
+  d   raw monomial  Jacobi-scaled  Chebyshev
+  1      5.714e+02      1.381e+01       1.00
+  2      3.363e+05      2.809e+02       2.82
+  3      1.971e+08      7.245e+03       2.83
+  4      1.217e+11      2.043e+05       4.37
+  5      8.239e+13      6.030e+06       4.37
+  6      6.112e+16      1.830e+08       5.65
+  7      4.824e+19      5.656e+09       5.65
+  8      3.951e+22      1.772e+11       6.65
+  9      3.318e+25      5.609e+12       6.65
+ 10      2.841e+28      1.790e+14       7.37
+ 11      2.469e+31      5.747e+15       7.37
+ 12      2.153e+34      1.856e+17       7.82
+
+Kit cross-check (spectrum / cond_after_diagonal_rescale on H):
+  d=1: kit raw kappa=5.714e+02 (SVD 5.714e+02), kit rescaled kappa=1.381e+01 (SVD 1.381e+01)
+  d=3: kit raw kappa=1.971e+08 (SVD 1.971e+08), kit rescaled kappa=7.245e+03 (SVD 7.245e+03)
+  d=5: kit raw kappa=8.197e+13 (SVD 8.239e+13), kit rescaled kappa=6.030e+06 (SVD 6.030e+06)
+  d=9: kit raw kappa=-5.702e+15 (SVD 3.318e+25), kit rescaled kappa=5.608e+12 (SVD 5.609e+12)
+  -> kit agrees while kappa(H) < ~1e14; beyond that eigvalsh on H is rounding noise, so tables use SVD of V.
+
+Predicted GD iterations kappa*ln(1e8), rescaled monomials:
+  d= 1: 2.54e+02
+  d= 2: 5.18e+03
+  d= 3: 1.33e+05
+  d= 4: 3.76e+06
+  d= 5: 1.11e+08
+  d= 6: 3.37e+09
+  d= 7: 1.04e+11
+  d= 8: 3.26e+12
+  d= 9: 1.03e+14
+  d=10: 3.30e+15
+  d=11: 1.06e+17
+  d=12: 3.42e+18
+
+cos(angle) between E^8 and E^9 columns: 0.998457  (angle = 3.184 deg)
+
+D3/D4  iterations to reach (f-f*)/(f0-f*) <= 1e-8 (cap 100,000)
+  d  GD scaled mono  CG scaled mono  GD Chebyshev  CG Chebyshev
+  1             105               2             1             1
+  2           1,875               3            20             3
+  3          31,949               4            20             4
+  4        >100,000               5            31             5
+  5        >100,000               7            32             6
+  6        >100,000              10            40             7
+  7        >100,000              14            41             7
+  8        >100,000              21            47             9
+  9        >100,000              36            47             8
+d=5 GD, monomials (Jacobi-scaled)    iters=>100000  time=2108.8 ms  final gap=2.68e-07
+d=5 CG, monomials (Jacobi-scaled)    iters=7  time=0.4 ms  final gap=7.47e-09
+d=5 GD, Chebyshev                    iters=32  time=0.9 ms  final gap=6.48e-09
+d=9 GD, monomials (Jacobi-scaled)    iters=>100000  time=2104.6 ms  final gap=9.58e-07
+d=9 CG, monomials (Jacobi-scaled)    iters=36  time=1.4 ms  final gap=4.03e-11
+d=9 GD, Chebyshev                    iters=47  time=1.0 ms  final gap=8.95e-09
+
+Kit gradient_descent, stop at ||grad|| <= 1e-6 ||grad_0|| (maxit 100,000):
+  d=5 monomial (rescaled) : 94,821 iterations
+  d=5 Chebyshev           : 47 iterations
+  d=9 monomial (rescaled) : >=100,000 iterations
+  d=9 Chebyshev           : 70 iterations
+d=9 raw : normal-equation vs QR fit, max |T diff| = 5.28e-04 degC, fit RMS = 0.0472 degC
+d=9 cheb: normal-equation vs QR fit, max |T diff| = 2.27e-12 degC, fit RMS = 0.0472 degC
+
+figures written to D:\project2-illconditioning\figs
