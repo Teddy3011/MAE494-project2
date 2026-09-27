@@ -55,7 +55,7 @@ $$f(c_k)-f^\star \le \left(1-\kappa^{-1}\right)^k \big(f(c_0)-f^\star\big) \;\Ri
 
 ## 3. Ill-conditioning mechanism (family C)
 
-Write $t = E/E_{\max} \in [0,1]$ so that $E^k = E_{\max}^k\, t^k$. Then $V = \tilde V D$, where $\tilde V_{ik} = t_i^k$ and $D = \operatorname{diag}(E_{\max}^k)$. The Hessian has **two** separate sources of ill-conditioning:
+Write $t = E/E_{\max} \in [0,1]$ so that $E^k = E_{\max}^k\, t^k$. Then $V = \tilde V D$, where $\tilde V_{ik} = t_i^k$ and $D = \mathrm{diag}(E_{\max}^k)$. The Hessian has **two** separate sources of ill-conditioning:
 
 1. **Multiscale columns (the trivial, family-F part).** $D$ ranges from $1$ to $E_{\max}^9 \approx 6.8\times10^{11}$, so the diagonal of $H$ spans ~23 orders of magnitude. Diagonal rescaling removes exactly this part.
 2. **Collinear columns (the intrinsic, family-C part).** For uniformly sampled $t$,
