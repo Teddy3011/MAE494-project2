@@ -37,7 +37,7 @@ $$T(E) = \sum_{k=0}^{9} c_k E^k, \qquad 0 \le E \le 20.644\ \text{mV}\ (0\text{�
 
 | Symbol | Meaning | Units | Dimension | Bounds | Type |
 |---|---|---|---|---|---|
-| $c_k,\ k=0,\dots,d$ | coefficient of basis function $\phi_k$ | °C/mV$^k$ (monomial basis); °C (Chebyshev basis) | $d+1$ ($=10$ at $d=9$) | none, $c_k\in\mathbb{R}$ | continuous |
+| $c_k,\ k=0,\dots,d$ | coefficient of basis function $\phi_k$ | $^\circ\text{C}/\text{mV}^k$ (monomial basis); °C (Chebyshev basis) | $d+1$ ($=10$ at $d=9$) | none, $c_k\in\mathbb{R}$ | continuous |
 
 The degree $d$ is a fixed modeling parameter, not a decision variable. It is the structural knob for the intrinsic-κ test ($d = 9$ is the NIST choice).
 
