@@ -27,7 +27,7 @@ $$T(E) = \sum_{k=0}^{9} c_k E^k, \qquad 0 \le E \le 20.644\ \text{mV}\ (0\text{�
 
 ## 2. Formulation
 
-**Data.** $m = 200$ voltages uniformly spaced on $[0, E_{\max}]$, $E_{\max}=20.644$ mV. Temperatures are generated from the published NIST type-K inverse coefficients [1] plus Gaussian sensor noise $\sigma = 0.05\thinspace ^\circ$C (seed 0). (Sanity check in code: $T(E_{\max}) = 500.0\thinspace ^\circ$C.)
+**Data.** $m = 200$ voltages uniformly spaced on $[0, E_{\max}]$, $E_{\max}=20.644$ mV. Temperatures are generated from the published NIST type-K inverse coefficients [1] plus Gaussian sensor noise $\sigma = 0.05$ °C (seed 0). (Sanity check in code: $T(E_{\max}) = 500.0$ °C.)
 
 ![Calibration data and fit](figs/calibration_fit.png)
 
