@@ -1,6 +1,7 @@
 # Project 2 — Ill-Conditioned Least Squares: Thermocouple Calibration Polynomials
 
-**Team members:** Your Name, Partner Name  
+**Team:** Hole Optimization
+**Team members:** Omar, Alex, Ratandeep 
 **Course:** MAE 494  
 **Date:** September 28, 2026
 
