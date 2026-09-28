@@ -1,8 +1,8 @@
 # Project 2 — Ill-Conditioned Least Squares: Thermocouple Calibration Polynomials
 
-**Team:** Hole Optimization.
-**Team members:** Omar, Alex, Ratandeep .
-**Course:** MAE 494  .
+**Team:** Hole Optimization\
+**Team members:** Omar, Alex, Ratandeep\
+**Course:** MAE 494\
 **Date:** September 28, 2026
 
 **Family C — correlated / multiscale features.** In linear least squares the Hessian is $H = V^\top V/m$; when the columns of the design matrix $V$ are nearly collinear or live on wildly different scales, $H$ is nearly singular and gradient methods crawl.
